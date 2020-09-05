@@ -64,14 +64,37 @@ Fruit* GenerateFruit () {
 	return NewFruit;
 }
 
+void EraseMove(Character* Avatar) {
+	move((*Avatar).y, (*Avatar).x );
+	printw(" ");
+	refresh();
+}
+
+Character* Move( Character* Avatar ){
+	int key = getch();
+	if ( key == 119 ){
+		EraseMove(Avatar);
+		(*Avatar).y += 1;
+		move ( (*Avatar).y, (*Avatar).x );
+		printw("O");
+		refresh();
+		return Avatar;
+	}
+	else
+		return Avatar;
+}
+
 int main (){
 	initscr();
 	noecho();
+	Character* Hero = (Character*) malloc (sizeof(Character));
+	(*Hero).x = 2;
+	(*Hero).y = 2;
 	RenderMap();
 	move(0,0);
 	GenerateFruit();
 	while (1){
-		getch();
+		Move(Hero);
 	}
 	endwin();
 }
