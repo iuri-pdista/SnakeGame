@@ -11,7 +11,10 @@ typedef struct fruit {
 	int WasEaten;
 } Fruit;
 
-typedef struct character {
+typedef struct character 
+	int x;
+	int y;
+	int score;
 } Character;
 
 int main (){
