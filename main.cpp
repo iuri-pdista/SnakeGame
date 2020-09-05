@@ -70,14 +70,14 @@ void EraseMove(Character* Avatar) {
 	refresh();
 }
 
-Character* InitializeAvatar (){
+Character* InitializeCharacter (){
 	Character* Hero = (Character*) malloc (sizeof(Character));
 	(*Hero).x = 2;
 	(*Hero).y = 2;
 	return Hero;
 }
 
-Character* Move( Character* Avatar ){
+Character* MoveCharacter( Character* Avatar ){
 	int key = getch();
 	if ( key == 119 ){
 		EraseMove(Avatar);
@@ -97,9 +97,9 @@ int main (){
 	RenderMap();
 	move(0,0);
 	GenerateFruit();
-	Character* Hero = InitializeAvatar();
+	Character* Hero = InitializeCharacter();
 	while (1){
-		Move(Hero);
+		MoveCharacter(Hero);
 	}
 	endwin();
 }
