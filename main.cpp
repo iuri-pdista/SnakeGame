@@ -74,7 +74,7 @@ Character* Move( Character* Avatar ){
 	int key = getch();
 	if ( key == 119 ){
 		EraseMove(Avatar);
-		(*Avatar).y += 1;
+		(*Avatar).y -= 1;
 		move ( (*Avatar).y, (*Avatar).x );
 		printw("O");
 		refresh();
