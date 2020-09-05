@@ -58,8 +58,6 @@ Fruit* GenerateFruit () {
 	(*NewFruit).x = RandInt(mapWidth - 1);
 	(*NewFruit).y = 0;
 	(*NewFruit).y = RandInt(mapHeight - 1);
-	printw("%d %d", (*NewFruit).x, (*NewFruit).y);
-	refresh();
 	move( (*NewFruit).y , (*NewFruit).x );
 	printw("X");
 	refresh();
@@ -69,7 +67,6 @@ Fruit* GenerateFruit () {
 int main (){
 	initscr();
 	noecho();
-	system("clear");
 	RenderMap();
 	move(0,0);
 	GenerateFruit();
