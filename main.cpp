@@ -76,10 +76,11 @@ void EraseMove(Character* Avatar) {
 	refresh();
 }
 
-Character* InitializeCharacter (){
+Character* InitializeCharacter ( int score ){
 	Character* Hero = (Character*) malloc (sizeof(Character));
 	(*Hero).x = 2;
 	(*Hero).y = 2;
+	(*Hero).score = score;
 	return Hero;
 }
 
@@ -123,16 +124,52 @@ Character* MoveCharacter( Character* Avatar ){
 	}
 }
 
+int ValidateMove( Character* Avatar, Fruit* fruit ){
+	int charX = (*Avatar).x;
+	int charY = (*Avatar).y;
+	int fruitX = (*fruit).x;
+	int fruitY = (*fruit).y;
+	if ( charX == fruitX && charY == fruitY ){
+		(*Avatar).score += 1;
+		PrintScore( Avatar );
+		return 1;
+	}
+	if ( charX == 0 || charX == mapWidth || charY == 0 || charY == mapHeight ){
+		move(9,18);
+		printw("YOU'VE LOST\n Press W to play again.");
+		refresh();
+		int Replay = getch();
+		if(Replay == 119 )
+			GameOver = 1;
+		else
+			endwin();
+			exit(0);
+	}
+	return 0;
+}
+
+int GameOn (Character* Hero, Fruit* newFruit){
+	while ( GameOver != 1 ){
+		MoveCharacter(Hero);
+		int theFruitWasEaten = ValidateMove(Hero, newFruit);
+		if ( theFruitWasEaten == 1 ){
+			Character* Hero = InitializeCharacter( (*Hero).score );
+			Fruit* newFruit = GenerateFruit();
+			GameOn( Hero, newFruit );
+		}
+	}
+	return 1;
+}
+
 int main (){
 	initscr();
 	noecho();
 	RenderMap();
 	move(0,0);
-	GenerateFruit();
-	Character* Hero = InitializeCharacter();
-	PrintScore( Hero );
-	while (1){
-		MoveCharacter(Hero);
-	}
+	Fruit* newFruit = GenerateFruit();
+	Character* Hero = InitializeCharacter(0);
+	GameOn(Hero, newFruit);
+	GameOver = 0;
+	main();
 	endwin();
 }
