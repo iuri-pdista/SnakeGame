@@ -79,25 +79,42 @@ Character* InitializeCharacter (){
 
 Character* MoveCharacter( Character* Avatar ){
 	int key = getch();
-	if ( key == 119 ){
-		EraseMove(Avatar);
-		(*Avatar).y -= 1;
-		move ( (*Avatar).y, (*Avatar).x );
-		printw("O");
-		refresh();
-		return Avatar;
-	}
-	else
-		if ( key == 115 ){
+	switch( key ){
+		case 119:
+			EraseMove(Avatar);
+			(*Avatar).y -= 1;
+			move ( (*Avatar).y, (*Avatar).x );
+			printw("O");
+			refresh();
+			return Avatar;
+		break;
+		case 115:
 			EraseMove(Avatar);
 			(*Avatar).y += 1;
 			move( (*Avatar).y, (*Avatar).x );
 			printw("O");
 			refresh();
 			return Avatar;
-		}
-		else
+		break;
+		case 97:
+			EraseMove(Avatar);
+			(*Avatar).x -= 1;
+			move( (*Avatar).y, (*Avatar).x );
+			printw("O");
+			refresh();
 			return Avatar;
+		break;
+		case 100:
+			EraseMove(Avatar);
+			(*Avatar).x += 1;
+			move( (*Avatar).y, (*Avatar).x );
+			printw("O");
+			refresh();
+			return Avatar;
+		break;
+		default:
+			return Avatar;
+	}
 }
 
 int main (){
