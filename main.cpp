@@ -20,6 +20,12 @@ typedef struct character {
 	int score;
 } Character;
 
+void PrintScore( Character* Avatar ){
+	move(0,0);
+	int score = (*Avatar).score;
+	printw("%d", score);
+}
+
 void RenderMap () {
 	int x = 0;
 	do {
@@ -124,6 +130,7 @@ int main (){
 	move(0,0);
 	GenerateFruit();
 	Character* Hero = InitializeCharacter();
+	PrintScore( Hero );
 	while (1){
 		MoveCharacter(Hero);
 	}
