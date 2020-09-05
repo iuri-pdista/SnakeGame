@@ -88,7 +88,16 @@ Character* MoveCharacter( Character* Avatar ){
 		return Avatar;
 	}
 	else
-		return Avatar;
+		if ( key == 115 ){
+			EraseMove(Avatar);
+			(*Avatar).y += 1;
+			move( (*Avatar).y, (*Avatar).x );
+			printw("O");
+			refresh();
+			return Avatar;
+		}
+		else
+			return Avatar;
 }
 
 int main (){
