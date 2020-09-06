@@ -132,6 +132,9 @@ int ValidateMove( Character* Avatar, Fruit* fruit ){
 	if ( charX == fruitX && charY == fruitY ){
 		Score += 1;
 		PrintScore();
+		move( (*Avatar).y, (*Avatar).x );
+		printw(" ");
+		refresh();
 		return 1;
 	}
 	if ( charX == 0 || charX == mapWidth || charY == 0 || charY == mapHeight ){
