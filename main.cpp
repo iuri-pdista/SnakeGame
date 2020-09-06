@@ -8,6 +8,7 @@
 int mapWidth = 40;
 int mapHeight = 20;
 int GameOver = 0;
+int Score = 0;
 
 typedef struct fruit {
 	int x;
@@ -20,10 +21,9 @@ typedef struct character {
 	int score;
 } Character;
 
-void PrintScore( Character* Avatar ){
+void PrintScore(){
 	move(0,0);
-	int score = (*Avatar).score;
-	printw("%d", score);
+	printw("%d", Score);
 }
 
 void RenderMap () {
@@ -80,7 +80,7 @@ Character* InitializeCharacter ( int score ){
 	Character* Hero = (Character*) malloc (sizeof(Character));
 	(*Hero).x = 2;
 	(*Hero).y = 2;
-	(*Hero).score = score;
+	refresh();
 	return Hero;
 }
 
@@ -130,8 +130,8 @@ int ValidateMove( Character* Avatar, Fruit* fruit ){
 	int fruitX = (*fruit).x;
 	int fruitY = (*fruit).y;
 	if ( charX == fruitX && charY == fruitY ){
-		(*Avatar).score += 1;
-		PrintScore( Avatar );
+		Score += 1;
+		PrintScore();
 		return 1;
 	}
 	if ( charX == 0 || charX == mapWidth || charY == 0 || charY == mapHeight ){
@@ -141,9 +141,10 @@ int ValidateMove( Character* Avatar, Fruit* fruit ){
 		int Replay = getch();
 		if(Replay == 119 )
 			GameOver = 1;
-		else
+		else{
 			endwin();
 			exit(0);
+		}	
 	}
 	return 0;
 }
