@@ -18,8 +18,14 @@ typedef struct fruit {
 typedef struct character {
 	int x;
 	int y;
-	int score;
 } Character;
+
+typedef struct enemy {
+	int x;
+	int y;
+	enemy* NxtEnemy;
+	enemy* LastEnemy;
+} Enemy;
 
 void PrintScore(){
 	move(0,0);
@@ -51,11 +57,28 @@ void RenderMap () {
 	}while(x < mapWidth);
 }
 
+int RemoveExceptions( int rndNum, int* exceptions){
+	for (int i = 0; i < ( (sizeof(exceptions) ) / (sizeof(int) )); i++){
+		if ( rndNum == exceptions[i] ){
+			return 1;
+		}		
+	}
+	return 0;
+}
+
 int RandInt ( int max ) {
 	srand(time(NULL));
 	int rndNum = 0;
-	rndNum = rand() % max;
-	return rndNum + 1;
+	rndNum = (rand() % max) + 1;
+	return rndNum;
+}
+
+int RandIntWithoutExceptions ( int max, int* exceptions ) {
+	int rndNum = RandInt(max);
+	if ( RemoveExceptions(rndNum, exceptions) == 1 ){
+		RandIntWithoutExceptions( max, exceptions );
+	}
+	return rndNum;
 }
 
 Fruit* GenerateFruit () {
@@ -76,7 +99,7 @@ void EraseMove(Character* Avatar) {
 	refresh();
 }
 
-Character* InitializeCharacter ( int score ){
+Character* InitializeCharacter ( ){
 	Character* Hero = (Character*) malloc (sizeof(Character));
 	(*Hero).x = 2;
 	(*Hero).y = 2;
@@ -142,8 +165,9 @@ int ValidateMove( Character* Avatar, Fruit* fruit ){
 		printw("YOU'VE LOST\n Press W to play again.");
 		refresh();
 		int Replay = getch();
-		if(Replay == 119 )
+		if( Replay == 119 )
 			GameOver = 1;
+			Score == 0;
 		else{
 			endwin();
 			exit(0);
@@ -152,12 +176,51 @@ int ValidateMove( Character* Avatar, Fruit* fruit ){
 	return 0;
 }
 
+void PrintEnemy ( Enemy* enemy ){
+	for ( Enemy* nxtEnemy = enemy; (*nxtEnemy).LastEnemy != NULL; nxtEnemy = (*nxtEnemy).LastEnemy ){
+		if ( (*nxtEnemy).x == 0 && (*nxtEnemy).y == 0 ){
+			move(RandInt(mapHeight), RandInt(mapWidth));
+			printw("@");
+			refresh();
+		}
+		move ( (*nxtEnemy).y, (*nxtEnemy).x );
+		printw("@");
+		refresh();
+		PrintScore();
+	}
+}
+
+Enemy* InitializeEnemy ( Enemy* lastEnemy, Enemy* nxtEnemy ){
+	Enemy* newEnemy = (Enemy*) malloc(sizeof(Enemy));
+	(*lastEnemy).NxtEnemy = newEnemy;
+	(*newEnemy).LastEnemy = lastEnemy;
+	(*newEnemy).NxtEnemy = nxtEnemy;
+	return newEnemy;
+}
+
+Enemy* GenerateEnemies (Fruit* fruit){
+	int MaxEnemies = RandInt(5);
+	Enemy* enemiesInitialPtr = (Enemy*) malloc(sizeof(Enemy));
+	Enemy* listPointer = InitializeEnemy( enemiesInitialPtr, NULL );
+	(*listPointer).x = 0;
+	(*listPointer).y = 0;
+	int exceptions[] = { (*fruit).x , (*fruit).x, 2, 2};
+	for ( int i = 0; i < MaxEnemies; i++ ){
+		listPointer = InitializeEnemy(listPointer, NULL);
+		(*listPointer).x = RandIntWithoutExceptions( mapWidth - 2, exceptions );
+		(*listPointer).y = RandIntWithoutExceptions( mapHeight - 2, exceptions );
+	}
+	PrintEnemy( listPointer );
+	return enemiesInitialPtr;
+}
+
 int GameOn (Character* Hero, Fruit* newFruit){
+	GenerateEnemies(newFruit);
 	while ( GameOver != 1 ){
 		MoveCharacter(Hero);
 		int theFruitWasEaten = ValidateMove(Hero, newFruit);
 		if ( theFruitWasEaten == 1 ){
-			Character* Hero = InitializeCharacter( (*Hero).score );
+			Character* Hero = InitializeCharacter( );
 			Fruit* newFruit = GenerateFruit();
 			GameOn( Hero, newFruit );
 		}
@@ -165,13 +228,14 @@ int GameOn (Character* Hero, Fruit* newFruit){
 	return 1;
 }
 
+
 int main (){
 	initscr();
 	noecho();
 	RenderMap();
 	move(0,0);
 	Fruit* newFruit = GenerateFruit();
-	Character* Hero = InitializeCharacter(0);
+	Character* Hero = InitializeCharacter();
 	GameOn(Hero, newFruit);
 	GameOver = 0;
 	main();
