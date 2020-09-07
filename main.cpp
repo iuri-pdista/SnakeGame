@@ -163,17 +163,18 @@ int ValidateMove( Character* Avatar, Fruit* fruit ){
 	}
 	if ( charX == 0 || charX == mapWidth || charY == 0 || charY == mapHeight ){
 		move(9,18);
-		printw("YOU'VE LOST\n Press W to play again.");
+		printw("YOU'VE LOST\n Press ENTER to play again, or ESC, to exit.");
 		refresh();
 		int Replay = getch();
-		printw("%d", Replay);
-		if( Replay == 119 ){
+		if( Replay == 10 ){
 			GameOver = 1;
 			Score = 0;
 		}
 		else{
-			endwin();
-			exit(0);
+			if( Replay == 27 ){
+				endwin();
+				exit(0);
+			}
 		}	
 	}
 	return 0;
