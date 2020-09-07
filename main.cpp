@@ -83,7 +83,7 @@ int RandIntWithoutExceptions ( int max, int* exceptions ) {
 
 Fruit* GenerateFruit () {
 	Fruit* NewFruit = (Fruit*) malloc(sizeof(Fruit));
-	int exceptions[] = {0, mapHeight, mapWidth};
+	int exceptions[] = {0, (mapHeight - 1), (mapWidth - 1)};
 	(*NewFruit).x = 0;
 	(*NewFruit).x = RandIntWithoutExceptions((mapWidth - 1), exceptions);
 	(*NewFruit).y = 0;
@@ -166,6 +166,7 @@ int ValidateMove( Character* Avatar, Fruit* fruit ){
 		printw("YOU'VE LOST\n Press W to play again.");
 		refresh();
 		int Replay = getch();
+		printw("%d", Replay);
 		if( Replay == 119 ){
 			GameOver = 1;
 			Score = 0;
