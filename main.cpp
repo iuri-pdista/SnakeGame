@@ -83,10 +83,11 @@ int RandIntWithoutExceptions ( int max, int* exceptions ) {
 
 Fruit* GenerateFruit () {
 	Fruit* NewFruit = (Fruit*) malloc(sizeof(Fruit));
+	int exceptions[] = {0, mapHeight, mapWidth};
 	(*NewFruit).x = 0;
-	(*NewFruit).x = RandInt(mapWidth - 1);
+	(*NewFruit).x = RandIntWithoutExceptions((mapWidth - 1), exceptions);
 	(*NewFruit).y = 0;
-	(*NewFruit).y = RandInt(mapHeight - 1);
+	(*NewFruit).y = RandIntWithoutExceptions((mapHeight - 1), exceptions);
 	move( (*NewFruit).y , (*NewFruit).x );
 	printw("X");
 	refresh();
