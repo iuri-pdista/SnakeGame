@@ -95,7 +95,7 @@ Fruit* GenerateFruit () {
 }
 
 void EraseMove(int x, int y) {
-	move( x, y );
+	move( y, x );
 	printw(" ");
 	refresh();
 }
