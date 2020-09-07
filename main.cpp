@@ -94,8 +94,8 @@ Fruit* GenerateFruit () {
 	return NewFruit;
 }
 
-void EraseMove(Character* Avatar) {
-	move((*Avatar).y, (*Avatar).x );
+void EraseMove(int x, int y) {
+	move( x, y );
 	printw(" ");
 	refresh();
 }
@@ -112,7 +112,7 @@ Character* MoveCharacter( Character* Avatar ){
 	int key = getch();
 	switch( key ){
 		case 119:
-			EraseMove(Avatar);
+			EraseMove( (*Avatar).x, (*Avatar).y );
 			(*Avatar).y -= 1;
 			move ( (*Avatar).y, (*Avatar).x );
 			printw("O");
@@ -120,7 +120,7 @@ Character* MoveCharacter( Character* Avatar ){
 			return Avatar;
 		break;
 		case 115:
-			EraseMove(Avatar);
+			EraseMove( (*Avatar).x, (*Avatar).y );
 			(*Avatar).y += 1;
 			move( (*Avatar).y, (*Avatar).x );
 			printw("O");
@@ -128,7 +128,7 @@ Character* MoveCharacter( Character* Avatar ){
 			return Avatar;
 		break;
 		case 97:
-			EraseMove(Avatar);
+			EraseMove( (*Avatar).x, (*Avatar).y );
 			(*Avatar).x -= 1;
 			move( (*Avatar).y, (*Avatar).x );
 			printw("O");
@@ -136,7 +136,7 @@ Character* MoveCharacter( Character* Avatar ){
 			return Avatar;
 		break;
 		case 100:
-			EraseMove(Avatar);
+			EraseMove( (*Avatar).x, (*Avatar).y );
 			(*Avatar).x += 1;
 			move( (*Avatar).y, (*Avatar).x );
 			printw("O");
@@ -148,7 +148,28 @@ Character* MoveCharacter( Character* Avatar ){
 	}
 }
 
-int ValidateMove( Character* Avatar, Fruit* fruit ){
+void EndGame() {
+	move(9,18);
+	printw("YOU'VE LOST\n Press ENTER to play again, or ESC, to exit.");
+	refresh();
+	while (1){
+		int Replay = getch();
+		if( Replay == 10){
+			GameOver = 1;
+			Score = 0;
+			break;
+		}
+		else{
+			if( Replay == 27 ){
+				endwin();
+				exit(0);
+			}
+		}	
+	}
+
+}
+
+int ValidateMove( Character* Avatar, Fruit* fruit, Enemy* Enemies ){
 	int charX = (*Avatar).x;
 	int charY = (*Avatar).y;
 	int fruitX = (*fruit).x;
@@ -162,27 +183,29 @@ int ValidateMove( Character* Avatar, Fruit* fruit ){
 		return 1;
 	}
 	if ( charX == 0 || charX == mapWidth || charY == 0 || charY == mapHeight ){
-		move(9,18);
-		printw("YOU'VE LOST\n Press ENTER to play again, or ESC, to exit.");
-		refresh();
-		while (1){
-			int Replay = getch();
-			printw("%d",Replay);
-			if( Replay == 10){
-				GameOver = 1;
-				Score = 0;
-				break;
-			}
-			else{
-				if( Replay == 27 ){
-					endwin();
-					exit(0);
-				}
-			}	
-
-		}
+		EndGame();
 	}
 	return 0;
+}
+
+void MoveEnemies( Enemy* enemies ){
+	for ( Enemy* nxtEnemy = enemies; (*nxtEnemy).LastEnemy != NULL; nxtEnemy = (*nxtEnemy).LastEnemy ){
+		int moveXOrY = RandInt(2);
+		if ( moveXOrY == 1){
+			EraseMove( (*nxtEnemy).x, (*nxtEnemy).y );
+			(*nxtEnemy).x += 1;
+			move( (*nxtEnemy).y, (*nxtEnemy).x );
+			printw("@");
+			refresh();			
+		}
+		else{
+	 		EraseMove( (*nxtEnemy).x, (*nxtEnemy).y );
+			(*nxtEnemy).y += 1;
+			move( (*nxtEnemy).y, (*nxtEnemy).x );
+			printw("@");
+			refresh();	
+		}
+	}
 }
 
 void PrintEnemy ( Enemy* enemy ){
@@ -220,14 +243,15 @@ Enemy* GenerateEnemies (Fruit* fruit){
 		(*listPointer).y = RandIntWithoutExceptions( mapHeight - 2, exceptions );
 	}
 	PrintEnemy( listPointer );
-	return enemiesInitialPtr;
+	return listPointer;
 }
 
 int GameOn (Character* Hero, Fruit* newFruit){
-	GenerateEnemies(newFruit);
+	Enemy* enemies = GenerateEnemies(newFruit);
 	while ( GameOver != 1 ){
 		MoveCharacter(Hero);
-		int theFruitWasEaten = ValidateMove(Hero, newFruit);
+		MoveEnemies(enemies);
+		int theFruitWasEaten = ValidateMove(Hero, newFruit, enemies);
 		if ( theFruitWasEaten == 1 ){
 			Character* Hero = InitializeCharacter( );
 			Fruit* newFruit = GenerateFruit();
