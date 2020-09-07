@@ -165,9 +165,10 @@ int ValidateMove( Character* Avatar, Fruit* fruit ){
 		printw("YOU'VE LOST\n Press W to play again.");
 		refresh();
 		int Replay = getch();
-		if( Replay == 119 )
+		if( Replay == 119 ){
 			GameOver = 1;
-			Score == 0;
+			Score = 0;
+		}
 		else{
 			endwin();
 			exit(0);
